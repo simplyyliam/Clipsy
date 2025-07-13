@@ -1,1 +1,5 @@
 @import "tailwindcss";
+
+.Glass {
+    box-shadow: inset 0px 3px 15px -8px #ffffff;
+}

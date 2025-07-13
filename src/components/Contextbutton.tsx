@@ -1,18 +1,20 @@
-import type { HtmlHTMLAttributes } from "react";
+import { forwardRef } from "react";
+import type { HTMLAttributes } from "react";
 
-export const ContextButton: React.FC<HtmlHTMLAttributes<HTMLButtonElement>> = ({
-  className,
-  ...props
-}) => {
-  return (
-    <button
-      className={`flex items-center justify-center rounded-full p-4
-                bg-white/1 hover:bg-white/5 active:bg-white/20
-                border border-white/20
-                backdrop-blur-[3px] backdrop-brightness-130 backdrop-saturate-150
+export const ContextButton = forwardRef<
+  HTMLButtonElement,
+  HTMLAttributes<HTMLButtonElement>
+>(({ className = "", ...props }, ref) => (
+  <button
+    ref={ref}
+    className={`Glass flex items-center justify-center rounded-full p-4
+                hover:bg-white/5
+                border-2 border-white/25
+                backdrop-blur-[2px] backdrop-brightness-150 backdrop-saturate-150
                 transition duration-300
-                absolute z-10 ${className}`}
-      {...props}
-    ></button>
-  );
-};
+                absolute z-10 opacity-0 scale-0 ${className}`}
+    {...props}
+  />
+));
+
+ContextButton.displayName = "ContextButton";
