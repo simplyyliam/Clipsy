@@ -15,7 +15,7 @@ export const FloatingScreen = forwardRef<HTMLVideoElement, VideoProps>(
       height={height}
       autoPlay
       loop
-      className={`${className}`}
+      className={`rounded-4xl ${className}`}
       {...props}
     >
       <source src={videoSrc} type="video/mp4" />
