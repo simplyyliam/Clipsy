@@ -12,7 +12,8 @@ export const ContextButton = forwardRef<
                 border-2 border-white/25
                 backdrop-blur-[2px] backdrop-brightness-150 backdrop-saturate-150
                 transition duration-300
-                absolute z-10 opacity-0 scale-0 ${className}`}
+                cursor-pointer
+                opacity-0 scale-0 ${className}`}
     {...props}
   />
 ));
