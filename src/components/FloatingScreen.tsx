@@ -6,12 +6,14 @@ interface FloatingScreenProps {
   height?: number;
   className?: string;
   children?: React.ReactNode;
+  outerRef?: React.Ref<HTMLDivElement>;
 }
 
 export const FloatingScreen = forwardRef<HTMLVideoElement, FloatingScreenProps>(
   ({ videoSrc, width, height, className, children, ...rest }, ref) => {
     return (
       <div
+
         className={`relative overflow-hidden rounded-4xl shadow-2xl ${className}`}
         style={{ width, height }}
         {...rest}

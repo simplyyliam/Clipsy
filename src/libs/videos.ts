@@ -19,10 +19,4 @@ export const clips = [
     url: "clip3.mp4",
     img: "/clip1.png",
   },
-  {
-    name: "Clip 4",
-    id: nanoid(),
-    url: "clip4.mp4",
-    img: "/clip1.png",
-  },
 ];
