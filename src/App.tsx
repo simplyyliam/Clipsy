@@ -117,7 +117,7 @@ useEffect(() => {
     tl.to(chevron, { rotate: trayOpen ? 180 : 0, duration: 0.4, ease: "power2.out" }, 0);
   }
 
-  return () => tl.kill();     
+  return () => {tl.kill();}     
 }, [trayOpen]);
 
 
