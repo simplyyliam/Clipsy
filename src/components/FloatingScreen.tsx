@@ -1,26 +1,40 @@
-import React, { forwardRef } from "react";
-import type { HTMLAttributes } from "react";
+import { forwardRef } from "react";
 
-interface VideoProps extends HTMLAttributes<HTMLVideoElement> {
+interface FloatingScreenProps {
   videoSrc: string;
-  width: number;
-  height: number;
+  width?: number;
+  height?: number;
+  className?: string;
+  children?: React.ReactNode;
 }
 
-export const FloatingScreen = forwardRef<HTMLVideoElement, VideoProps>(
-  ({ videoSrc, width, height, className = "", ...props }, ref) => (
-    <video
-      ref={ref}
-      width={width}
-      height={height}
-      autoPlay
-      loop
-      className={`rounded-4xl ${className}`}
-      {...props}
-    >
-      <source src={videoSrc} type="video/mp4" />
-    </video>
-  )
+export const FloatingScreen = forwardRef<HTMLVideoElement, FloatingScreenProps>(
+  ({ videoSrc, width, height, className, children, ...rest }, ref) => {
+    return (
+      <div
+        className={`relative overflow-hidden rounded-4xl shadow-2xl ${className}`}
+        style={{ width, height }}
+        {...rest}
+      >
+        <video
+          ref={ref}
+          className="w-full h-full object-cover"
+          autoPlay
+          muted
+          loop
+          playsInline
+        >
+          <source src={videoSrc} type="video/mp4" />
+        </video>
+
+        <div className="absolute inset-0 flex pointer-events-none">
+          <div className="pointer-events-auto">
+            {children}
+          </div>
+        </div>
+      </div>
+    );
+  }
 );
 
 FloatingScreen.displayName = "FloatingScreen";
