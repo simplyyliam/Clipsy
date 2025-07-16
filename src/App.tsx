@@ -21,6 +21,7 @@ function App() {
   const [activeVideo, setActiveVideo] = useState("");
   const [trayOpen, setTrayOpen] = useState(false);
 
+
   useEffect(() => {
     const ctx = gsap.context(() => {
       const container = containerRef.current;
@@ -98,38 +99,60 @@ function App() {
     setActiveVideo(url);
   };
 
-const handleVideoTray = () => setTrayOpen(prev => !prev);
-  
-useEffect(() => {
-  const tray    = videoContainerRef.current;
-  const screen  = screenRef.current;
-  const chevron = chevronRef.current;
-  const trayButton = videoTrayRef.current
+  const handleVideoTray = () => setTrayOpen((prev) => !prev);
 
-  if (!tray || !screen) return;      // first render: just bail, no cleanup
+  useEffect(() => {
+    const tray = videoContainerRef.current;
+    const screen = screenRef.current;
+    const chevron = chevronRef.current;
+    const trayButton = videoTrayRef.current;
+    const clip = videoRef.current
 
-  const tl = gsap.timeline();
+    if (!tray || !screen) return; 
 
-  tl.to(tray,   { y: trayOpen ? 2000   : 0, duration: 0.5, ease: "power3.out" }, 0);
-  tl.to(screen, { y: trayOpen ? 100 :   0, duration: 0.5, ease: "power3.out" }, 0);
-  tl.to(trayButton, {y: trayOpen ? 100 : 0, duration: 0.5, ease: "power3.out" }, 0)
+    const tl = gsap.timeline();
 
-  if (chevron) {
-    tl.to(chevron, { rotate: trayOpen ? 180 : 0, duration: 0.4, ease: "power2.out" }, 0);
-  }
+    tl.to(
+      tray,
+      { y: trayOpen ? 2000 : 0, duration: 0.5, ease: "power3.out" },
+      0
+    );
+    tl.to(
+      screen,
+      { y: trayOpen ? 100 : 0, duration: 0.5, width: trayOpen ? "100vw" : 1000, height: trayOpen ? "100vh" : 600,  ease: "power3.out" },
+      0
+    );
+    tl.to(
+      clip,
+      { width: trayOpen ? "100vw" : 1000, height: trayOpen ? "100vh" : 600, duration: 0.5, ease: "power3.out" },
+      0
+    );
 
-  return () => {tl.kill();}     
-}, [trayOpen]);
+    tl.to(
+      trayButton,
+      { y: trayOpen ? 100 : 0, duration: 0.5, ease: "power3.out" },
+      0
+    );
 
+    if (chevron) {
+      tl.to(
+        chevron,
+        { rotate: trayOpen ? 180 : 0, duration: 0.4, ease: "power2.out" },
+        0
+      );
+    }
+
+    return () => {
+      tl.kill();
+    };
+  }, [trayOpen]);
 
   return (
-    <div className="flex flex-col items-center justify-center w-screen h-screen">
-      <div ref={screenRef}>
+    <div className="flex flex-col items-center justify-center w-screen h-screen overflow-hidden">
+      <div ref={screenRef} className="flex items-center justify-center w-[90vw] h-[90vh]">
         <FloatingScreen
           ref={videoRef}
           videoSrc={activeVideo}
-          width={1000}
-          height={638}
         >
           <Container ref={containerRef}>
             <ContextButton onClick={handlePause} ref={ControlsRef}>
@@ -141,7 +164,7 @@ useEffect(() => {
       <button
         onClick={handleVideoTray}
         ref={videoTrayRef}
-        className="absolute bottom-45 z-10 text-white cursor-pointer box-border flex flex-col justify-center items-center p-[5px] gap-[10px] w-[108px] h-[54px] bg-white/15 border border-white/40 backdrop-blur-[3.6px] rounded-full"
+        className="absolute bottom-48 z-10 text-white cursor-pointer box-border flex flex-col justify-center items-center p-[5px] gap-[10px] w-[104px] h-[60px] bg-white/15 border border-white/40 backdrop-blur-[3.6px] rounded-full"
       >
         <div className="flex p-2.5 items-center justify-center gap-2.5">
           <span ref={chevronRef}>
@@ -152,14 +175,18 @@ useEffect(() => {
       </button>
       <div ref={videoContainerRef}>
         <VideoContainer>
-          <div className="flex items-center justify-center w-full h-[8em] px-10 gap-3">
+          <div className="flex justify-center w-full px-10 gap-3">
             {clips.map((clip) => (
               <button
                 onClick={() => changeActiveVideo(clip.url)}
                 key={clip.id}
-                className="w-[15em] h-full drop-shadow-xl cursor-pointer hover:scale-105 transition-all ease-linear duration-300 "
+                className="w-[15em] h-[9em] drop-shadow-xl cursor-pointer hover:scale-105 transition-all ease-linear duration-300 "
               >
-                <img className="rounded-2xl" src={clip.img} alt="Videos" />
+                <img
+                  className="rounded-2xl w-full h-full"
+                  src={clip.img}
+                  alt="Videos"
+                />
               </button>
             ))}
           </div>
@@ -170,4 +197,3 @@ useEffect(() => {
 }
 
 export default App;
-
