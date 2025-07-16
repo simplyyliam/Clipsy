@@ -6,7 +6,8 @@ import gsap from "gsap";
 import { Container } from "./components/container";
 import { VideoContainer } from "./components/VideoTray";
 import { clips } from "./libs/videos";
-import { ChevronDown, Video } from "lucide-react";
+import { ChevronDown } from "lucide-react";
+import VideoIcon from "./components/videoIcon";
 
 function App() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -140,12 +141,14 @@ useEffect(() => {
       <button
         onClick={handleVideoTray}
         ref={videoTrayRef}
-        className="Glass flex items-center justify-between p-2 gap-4 border-1 border-white/35 backdrop-blur-[3px] absolute bottom-45 drop-shadow-xl cursor-pointer z-100 rounded-full text-white"
+        className="absolute bottom-45 z-10 text-white cursor-pointer box-border flex flex-col justify-center items-center p-[5px] gap-[10px] w-[108px] h-[54px] bg-white/15 border border-white/40 backdrop-blur-[3.6px] rounded-full"
       >
-        <span ref={chevronRef}>
-          <ChevronDown />
-        </span>
-        <Video />
+        <div className="flex p-2.5 items-center justify-center gap-2.5">
+          <span ref={chevronRef}>
+            <ChevronDown />
+          </span>
+          <VideoIcon />
+        </div>
       </button>
       <div ref={videoContainerRef}>
         <VideoContainer>
@@ -167,3 +170,4 @@ useEffect(() => {
 }
 
 export default App;
+
