@@ -119,20 +119,24 @@ function App() {
     );
     tl.to(
       screen,
-      { y: trayOpen ? 100 : 0, duration: 0.5, width: trayOpen ? "100vw" : 1000, height: trayOpen ? "100vh" : 600,  ease: "power3.out" },
+      { y: trayOpen ? 100 : 0, duration: 0.5, width: trayOpen ? "90vw" : 1000, height: trayOpen ? "90vh" : 600,  ease: "power3.out" },
       0
     );
     tl.to(
       clip,
-      { width: trayOpen ? "100vw" : 1000, height: trayOpen ? "100vh" : 600, duration: 0.5, ease: "power3.out" },
+      { width: trayOpen ? "90vw" : 1000, height: trayOpen ? "90vh" : 600, duration: 0.5, ease: "power3.out" },
       0
     );
 
-    tl.to(
-      trayButton,
-      { y: trayOpen ? 100 : 0, duration: 0.5, ease: "power3.out" },
-      0
-    );
+tl.to(
+  trayButton,
+  {
+    y: trayOpen ? 190 : 0,
+    duration: 0.5,
+    ease: "power3.out",
+  },
+  0
+);
 
     if (chevron) {
       tl.to(
@@ -146,6 +150,8 @@ function App() {
       tl.kill();
     };
   }, [trayOpen]);
+
+
 
   return (
     <div className="flex flex-col items-center justify-center w-screen h-screen overflow-hidden">
@@ -164,7 +170,7 @@ function App() {
       <button
         onClick={handleVideoTray}
         ref={videoTrayRef}
-        className="absolute bottom-48 z-10 text-white cursor-pointer box-border flex flex-col justify-center items-center p-[5px] gap-[10px] w-[104px] h-[60px] bg-white/15 border border-white/40 backdrop-blur-[3.6px] rounded-full"
+        className="absolute bottom-50 z-10 text-white cursor-pointer opacity-100 pointer-events-auto transition-opacity duration-300 box-border flex flex-col justify-center items-center p-[5px] gap-[10px] w-[104px] h-[60px] bg-white/15 border border-white/40 backdrop-blur-[3.6px] rounded-full"
       >
         <div className="flex p-2.5 items-center justify-center gap-2.5">
           <span ref={chevronRef}>
