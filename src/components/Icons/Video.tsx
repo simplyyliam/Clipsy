@@ -1,4 +1,6 @@
-export default function VideoIcon() {
+
+
+function Video() {
   return (
     <svg
       width="22"
@@ -26,3 +28,5 @@ export default function VideoIcon() {
     </svg>
   );
 }
+
+export default Video;
