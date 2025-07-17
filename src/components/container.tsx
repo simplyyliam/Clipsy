@@ -5,7 +5,7 @@ export const Container = forwardRef<HTMLDivElement, HtmlHTMLAttributes<HTMLDivEl
     return (
       <div
         ref={ref}
-        className={`flex items-center justify-center absolute w-full h-full rounded-4xl z-1 ${className}`}
+        className={`flex items-center justify-center absolute w-full h-full rounded-3xl z-1 ${className}`}
         {...props}
       >
         {children}

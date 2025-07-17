@@ -14,7 +14,7 @@ export const FloatingScreen = forwardRef<HTMLVideoElement, FloatingScreenProps>(
     return (
       <div
 
-        className={`relative overflow-hidden rounded-4xl shadow-2xl bg-black/50 ${className}`}
+        className={`relative overflow-hidden rounded-3xl shadow-2xl bg-black/50 ${className}`}
         style={{ width, height }}
         {...rest}
       >

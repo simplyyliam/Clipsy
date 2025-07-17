@@ -9,7 +9,6 @@ import { clips } from "./libs/videos";
 import { ChevronDown } from "lucide-react";
 import Video from "./components/Icons/Video";
 
-
 function App() {
   const containerRef = useRef<HTMLDivElement>(null);
   const ControlsRef = useRef<HTMLButtonElement>(null);
@@ -21,7 +20,7 @@ function App() {
 
   const [activeVideo, setActiveVideo] = useState("");
   const [trayOpen, setTrayOpen] = useState(false);
-
+  const [thumbnails, setThumbnails] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -107,9 +106,9 @@ function App() {
     const screen = screenRef.current;
     const chevron = chevronRef.current;
     const trayButton = videoTrayRef.current;
-    const clip = videoRef.current
+    const clip = videoRef.current;
 
-    if (!tray || !screen) return; 
+    if (!tray || !screen) return;
 
     const tl = gsap.timeline();
 
@@ -120,24 +119,35 @@ function App() {
     );
     tl.to(
       screen,
-      { y: trayOpen ? 100 : 0, duration: 0.5, width: trayOpen ? "90vw" : 1000, height: trayOpen ? "90vh" : 600,  ease: "power3.out" },
+      {
+        y: trayOpen ? 100 : 0,
+        duration: 0.5,
+        width: trayOpen ? "90vw" : 1000,
+        height: trayOpen ? "90vh" : 600,
+        ease: "power3.out",
+      },
       0
     );
     tl.to(
       clip,
-      { width: trayOpen ? "90vw" : 1000, height: trayOpen ? "90vh" : 600, duration: 0.5, ease: "power3.out" },
+      {
+        width: trayOpen ? "90vw" : 1000,
+        height: trayOpen ? "90vh" : 600,
+        duration: 0.5,
+        ease: "power3.out",
+      },
       0
     );
 
-tl.to(
-  trayButton,
-  {
-    y: trayOpen ? 190 : 0,
-    duration: 0.5,
-    ease: "power3.out",
-  },
-  0
-);
+    tl.to(
+      trayButton,
+      {
+        y: trayOpen ? 190 : 0,
+        duration: 0.5,
+        ease: "power3.out",
+      },
+      0
+    );
 
     if (chevron) {
       tl.to(
@@ -152,15 +162,82 @@ tl.to(
     };
   }, [trayOpen]);
 
+useEffect(() => {
+  const generateThumbnail = (url: string): Promise<string> => {
+    return new Promise((resolve) => {
+      const video = document.createElement("video");
+      video.src = url;
+      video.crossOrigin = "anonymous";
+      video.muted = true;
+      video.playsInline = true;
+      video.preload = "auto";
+
+      const canvas = document.createElement("canvas");
+      let triedSecondTime = false;
+
+      const cleanup = () => {
+        video.removeEventListener("loadeddata", onLoadedData);
+        video.removeEventListener("seeked", onSeeked);
+      };
+
+      const onSeeked = () => {
+        const ctx = canvas.getContext("2d");
+        if (!ctx || video.videoWidth === 0 || video.videoHeight === 0) {
+          cleanup();
+          resolve(""); // fallback
+          return;
+        }
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        const imageData = ctx.getImageData(0, 0, 10, 10).data;
+        const isBlackFrame = Array.from(imageData).every((v) => v === 0);
+
+        if (isBlackFrame && !triedSecondTime) {
+          triedSecondTime = true;
+          video.currentTime = 2; // try again at later timestamp
+        } else {
+          const dataUrl = canvas.toDataURL("image/jpeg");
+          cleanup();
+          resolve(dataUrl);
+        }
+      };
+
+      const onLoadedData = () => {
+        video.currentTime = 1;
+        video.addEventListener("seeked", onSeeked);
+      };
+
+      video.addEventListener("loadeddata", onLoadedData);
+    });
+  };
+
+  const loadAllThumbnails = async () => {
+    const results: Record<string, string> = {};
+    for (const clip of clips) {
+      try {
+        const thumb = await generateThumbnail(clip.url);
+        results[clip.url] = thumb;
+      } catch {
+        results[clip.url] = "";
+      }
+    }
+    setThumbnails(results);
+  };
+
+  loadAllThumbnails();
+}, []);
 
 
   return (
     <div className="flex flex-col items-center justify-center w-screen h-screen overflow-hidden">
-      <div ref={screenRef} className="flex items-center justify-center w-[90vw] h-[90vh]">
-        <FloatingScreen
-          ref={videoRef}
-          videoSrc={activeVideo}
-        >
+      <div
+        ref={screenRef}
+        className="flex items-center justify-center w-[90vw] h-[90vh]"
+      >
+        <FloatingScreen ref={videoRef} videoSrc={activeVideo}>
           <Container ref={containerRef}>
             <ContextButton onClick={handlePause} ref={ControlsRef}>
               <Play />
@@ -189,11 +266,15 @@ tl.to(
                 key={clip.id}
                 className="w-[15em] h-[9em] drop-shadow-xl cursor-pointer hover:scale-105 transition-all ease-linear duration-300 "
               >
-                <img
-                  className="rounded-2xl w-full h-full"
-                  src={clip.img}
-                  alt="Videos"
-                />
+                {!thumbnails[clip.url] ? (
+                  <div className="w-full h-full bg-black/25 rounded-2xl animate-pulse" />
+                ) : (
+                  <img
+                    className="rounded-2xl w-full h-full object-cover"
+                    src={thumbnails[clip.url]}
+                    alt="Videos"
+                  />
+                )}
               </button>
             ))}
           </div>
